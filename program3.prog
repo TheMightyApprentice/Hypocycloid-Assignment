@@ -1,0 +1,246 @@
+
+function MakeCanvas(width, height, locID) {
+
+    var canvas = document.createElement('canvas')
+        canvas.tabIndex = 0;
+        canvas.height = height;
+        canvas.width = width;
+
+    document.body.appendChild(canvas);
+    return canvas;
+}
+
+function InitGL(canvas) {
+    var gl = WebGLUtils.setupWebGL(canvas);
+
+    return gl;
+}
+
+function Canvas(width, height, locID) {
+    var canvas = MakeCanvas(width, height, locID);
+
+    this.canvas = canvas;
+    this.gl = InitGL(canvas);
+
+    var gl = this.gl;
+
+    var tmpCanvas = this;
+ 
+    this.x = canvas.offsetLeft;
+    this.y = canvas.offsetTop;
+
+    canvas.addEventListener("keypress",
+         function(evnt) {
+	    tmpCanvas.KeyFunc(tmpCanvas, evnt);
+	 }
+    );
+
+    gl.viewport(0,0, width, height);
+
+    program = initShaders(gl, "vertex-shader","fragment-shader");
+    gl.useProgram(program);
+
+    this.vBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
+
+    var vPosition = gl.getAttribLocation(program, "vPosition");
+    gl.vertexAttribPointer(vPosition,2,gl.FLOAT, false,0,0);
+    gl.enableVertexAttribArray(vPosition);
+
+    this.Init();
+    this.k = 5;
+    this.MakePoints();
+    gl.bufferData(gl.ARRAY_BUFFER,flatten(this.vertex),gl.STATIC_DRAW);
+
+    this.pctLoc = gl.getUniformLocation(program, "percent");
+    this.thetaLoc = gl.getUniformLocation(program, "theta");
+
+    this.pct = 0;
+    this.pctStep = 0.05;
+    gl.uniform1f(this.pctLoc, this.pct);
+    this.theta = 0;
+    this.whirStep = 0.1;
+    gl.uniform1f(this.thetaLoc, this.theta);
+
+    this.animationState = false;
+    this.whiranimationState = false;
+    this.repeatboi = false;
+    this.repeatwhir = false;
+    this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
+
+    this._Listener();
+
+    return this;
+}
+
+Canvas.prototype = {
+
+    Init: function() {
+        this.a = 5;
+        this.b = 1;
+        this.boink = 0;
+    },
+
+    MakePoints: function(){
+        var theta = 0.0;
+	
+        var data = [];
+	i = 0;
+
+        this.vertex = [];
+
+        var k = this.a/this.b;
+
+	for(theta = 0; theta < this.b*(2*Math.PI); theta += Math.PI/100) {
+	    var x = (this.b*(k-1)*Math.cos(theta))+(this.b*Math.cos((k-1)*theta));
+	    var y = (this.b*(k-1)*Math.sin(theta))-(this.b*Math.sin((k-1)*theta));
+
+            x = x/(2*this.a);
+            y = y/(2*this.a);
+
+	    vertex = [x,y];
+	    data.push(vertex);
+	}
+
+	this.vertex = data;
+
+	return;
+    },
+
+    ChangeAnimation: function() {
+	this.animationState = !this.animationState; 
+	if (this.animationState) {
+	   this.timerID = setInterval(this.AutomatedAnimationStep,1,this);
+	} else {
+	   clearInterval(this.timerID);
+	}
+    },
+
+    ChangeWhirAnimation: function() {
+        this.whiranimationState = !this.whiranimationState;
+        if (this.whiranimationState) {
+           this.timerID = setInterval(this.AutomatedWhirAnimationStep,1,this);
+        } else {
+           clearInterval(this.timerID);
+        }
+    },
+
+    SetA: function(a) {
+        gl = this.gl;
+        this.a = parseInt(a);
+        this.MakePoints();
+        this.gl.bufferData(gl.ARRAY_BUFFER,flatten(this.vertex),gl.STATIC_DRAW);
+        this.Redisplay();
+    },
+
+    SetB: function(b) {
+        gl = this.gl;
+        this.b = parseInt(b);
+        this.MakePoints();
+        this.gl.bufferData(gl.ARRAY_BUFFER,flatten(this.vertex),gl.STATIC_DRAW);
+        this.Redisplay();
+    },
+
+    AutomatedAnimationStep: function(me) {
+        me.AnimationStep();
+    },
+
+    AutomatedWhirAnimationStep: function(me) {
+        me.Whirl();
+    },
+
+
+    AnimationStep: function() {
+        this.pct += this.pctStep;
+
+	if (this.pct >= 1.0) {
+	   this.pct = 1.0;
+	   this.pctStep *= -1;
+	}
+
+	if (this.pct <= 0.0) {
+	   this.pct = 0.0;
+	   this.pctStep *= -1;
+	}
+
+	if (this.pct == 0 && !this.repeatboi) {
+	   this.ChangeAnimation();
+	}
+
+        this.gl.uniform1f(this.pctLoc, this.pct);
+	this.Redisplay();
+    },
+
+    Redisplay: function() {
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+
+	this.gl.drawArrays(this.gl.LINE_LOOP, 0, this.vertex.length);
+        return;
+    },
+
+    _Listener: function(evnt) {
+       if (typeof arguments.callee.me == 'undefined') {
+          arguments.callee.me = this;
+       } 
+
+       if (typeof evnt != "undefined") {
+          if (typeof evnt == "repeatboink") {
+              arguments.callee.me.RepeatBoink(arguments.callee.me, evnt);
+          }
+          else {
+              arguments.callee.me.RepeatWhirl(arguments.callee.me, evnt);
+          }   
+       }
+    },
+
+    KeyFunc: function(me, evnt) {
+          switch(evnt.key) {
+              case 'b': me.ChangeAnimation();
+                        this.repeatboi = false;
+                   break;
+              case 'B': me.ChangeAnimation();
+                        if (this.repeatboi == false) {
+                            this.repeatboi = true;
+                        }
+                        else {
+                            this.repeatboi = false;
+                        }
+                   break;
+	      case 'W': me.ChangeWhirAnimation();
+                        if (this.repeatwhir == false) {
+                            this.repeatwhir = true;
+                        }
+                        else {
+                            this.repeatwhir = false;
+                            Whirl
+                        }
+                  break;
+	      case 'w': me.ChangeWhirAnimation();
+                        this.repeatwhir = false;
+                  break;
+	      default:
+                  console.log("\tKeydown not handeled "+ evnt.key);
+          }
+    },
+
+    Whirl: function() {
+        this.theta += this.whirStep;
+
+        if (this.theta >= 2*Math.PI) {
+           this.theta = 2*Math.PI;
+           this.whirStep *= -1;
+        }
+
+        if (this.theta <= 0.0) {
+           this.theta = 0.0;
+           this.whirStep *= -1;
+        }
+
+        if (this.theta == 0 && !this.repeatwhir) {
+           this.ChangeWhirAnimation();
+        }
+
+        this.gl.uniform1f(this.thetaLoc, this.theta);
+        this.Redisplay();
+    },
+};
