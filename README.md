@@ -24,3 +24,5 @@ A definition for hypocycloid can be found here: https://en.wikipedia.org/wiki/Hy
   b: Makes the shape "boing" outward and return to its original shape.
   
   Shift + b: Continuously "boings" the shape in and out until Shift + b is pressed again. 
+
+***Make sure to extract files before running the HTML.
