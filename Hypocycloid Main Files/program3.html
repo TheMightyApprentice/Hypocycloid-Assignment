@@ -1,0 +1,69 @@
+<html>
+<head>
+
+<script id="vertex-shader" type="x-shader/x-vertex" >
+attribute vec4 vPosition;
+uniform float percent;
+uniform float theta;
+
+varying vec4 f_Color;
+
+void main() {
+    float scale = 1.0+percent;
+    float d;
+    vec4 pos;
+   
+    pos = vPosition;
+
+    vec4 red =  vec4(1.0, 0.0, 0.0, 1.0);
+    vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);
+
+    d = 2.0*(sqrt(pos.x * pos.x + pos.y * pos.y));
+
+    gl_Position.x = (-sin(theta) * pos.x) + (cos(theta) * pos.y);
+    gl_Position.y = (sin(theta) * pos.y) + (cos(theta) * pos.x);
+    gl_Position.z = 0.0;
+    gl_Position.w = 1.0/scale;
+    
+    gl_Position = vec4(gl_Position.x, gl_Position.y, gl_Position.z, gl_Position.w);
+    f_Color = mix(blue, red, d);
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 f_Color;
+
+void main() {
+    gl_FragColor = f_Color;
+}
+</script>
+
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="program3.prog"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+<style>
+canvas{
+    display:block;
+    border:2px solid #0094ff;
+}
+</style>
+</head>
+
+<body>
+<title>Codi Uhouse: Hypocycloid</title>
+<h1>Hypocycloid</h1>
+
+<script>
+    var canvas1 = new Canvas(500, 500);
+    canvas1.Redisplay();
+</script>
+
+A: <input type="text" name="A" value="5" onchange="canvas1.SetA(this.value); canvas1.MakePoints(); canvas1.Redisplay()">
+B: <input type="text" name="B" value="1" onchange="canvas1.SetB(this.value); canvas1.MakePoints(); canvas1.Redisplay()">
+
+</body>
+</html>
