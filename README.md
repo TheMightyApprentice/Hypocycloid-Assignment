@@ -5,7 +5,7 @@ A definition for hypocycloid can be found here: https://en.wikipedia.org/wiki/Hy
 
 -Common folder holds three pre-made files not made by me but required to run the main .html and .prog files.
 
--The A and B values represent both top and bottom of a mixed fraction representation of k respectively.
+-A represents the radius of the bigger circle while B represents the radius of the smaller circle.
 
 -When refreshing the page or reseting the drawing, the hypocycloid image will revert to how it would look as if A = 5 and B = 1. 
 
