@@ -13,6 +13,8 @@ A definition for hypocycloid can be found here: https://en.wikipedia.org/wiki/Hy
 
 -Shapes formed from A < B can be created but will be cut.
 
+-Shapes that require 250 revolutions or less around the circle will now appear (before it was shapes that only required 2).
+
 -Animations can be done with the completed shape with these buttons:
 
   w: Spins the shape and then stops in the default orientation the shape was in origionally.
