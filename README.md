@@ -11,6 +11,8 @@ A definition for hypocycloid can be found here: https://en.wikipedia.org/wiki/Hy
 
 -The user values from when a person last entered them in will stay and must be replaced with a different number in order to create more drawings.
 
+-Shapes formed from A < B can be created but will be cut.
+
 -Animations can be done with the completed shape with these buttons:
 
   w: Spins the shape and then stops in the default orientation the shape was in origionally.
