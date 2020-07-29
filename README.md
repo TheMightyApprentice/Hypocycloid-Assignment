@@ -1,5 +1,5 @@
 # HypocycloidAssignment
-Program that creates a hypocycloid using both HTML and Javascript.
+Program that creates a hypocycloid using HTML, Javascript, and WebGL.
 
 A definition for hypocycloid can be found here: https://en.wikipedia.org/wiki/Hypocycloid
 
