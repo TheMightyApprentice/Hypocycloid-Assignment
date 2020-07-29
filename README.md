@@ -3,7 +3,7 @@ Program that creates a hypocycloid using both HTML and Javascript.
 
 A definition for hypocycloid can be found here: https://en.wikipedia.org/wiki/Hypocycloid
 
-
+-Common folder holds three pre-made files not made by me but required to run the main .html and .prog files.
 
 -The A and B values represent both top and bottom of a mixed fraction representation of k respectively.
 
